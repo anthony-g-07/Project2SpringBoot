@@ -1,18 +1,18 @@
-package edu.csumb.project_2;
+//package edu.csumb.project_2;
 
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.context.annotation.Bean;
-import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.utility.DockerImageName;
+//import org.springframework.boot.test.context.TestConfiguration;
+//import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+//import org.springframework.context.annotation.Bean;
+//import org.testcontainers.containers.MariaDBContainer;
+//import org.testcontainers.utility.DockerImageName;
 
-@TestConfiguration(proxyBeanMethods = false)
-class TestcontainersConfiguration {
+//@TestConfiguration(proxyBeanMethods = false)
+//class TestcontainersConfiguration {
 
-    @Bean
-    @ServiceConnection
-    MariaDBContainer<?> mariaDbContainer() {
-        return new MariaDBContainer<>(DockerImageName.parse("mariadb:latest"));
-    }
+   // @Bean
+   // @ServiceConnection
+   // MariaDBContainer<?> mariaDbContainer() {
+   //     return new MariaDBContainer<>(DockerImageName.parse("mariadb:latest"));
+   // }
 
-}
+//}
