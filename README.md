@@ -1,4 +1,4 @@
-## Mock Up
+## [Mock Up](https://www.figma.com/board/AYrjN5DgGPmliZjl76yyT1/ERD?node-id=0-1&t=vThQ86tCUnt24WzE-1)
 
 ### Sign Up
 ![Imgur Image](https://i.imgur.com/VLclpVK_d.webp?maxwidth=760&fidelity=grand)
