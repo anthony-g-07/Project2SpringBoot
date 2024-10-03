@@ -24,7 +24,9 @@ dependencies {
 	// Spring Session (if needed for session management)
 	implementation 'org.springframework.session:spring-session-core'
 
+
 	// Spring Boot DevTools (for live reloading during development)
+
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
 	// MariaDB JDBC driver (for database connectivity with MariaDB)

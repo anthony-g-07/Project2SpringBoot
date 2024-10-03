@@ -1,10 +1,7 @@
 services:
-  mariadb:
-    image: 'mariadb:latest'
-    environment:
-      - 'MARIADB_DATABASE=mydatabase'
-      - 'MARIADB_PASSWORD=secret'
-      - 'MARIADB_ROOT_PASSWORD=verysecret'
-      - 'MARIADB_USER=myuser'
+  springboot:
+    build: .
     ports:
-      - '3306'
+      - "8080:8080"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb+srv://anguido:tonyjr07@cluster0.mz475.mongodb.net/myDatabase?retryWrites=true&w=majority&appName=Cluster0
