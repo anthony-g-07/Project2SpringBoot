@@ -9,8 +9,9 @@ import java.util.Optional;
 public interface ItemRepository extends MongoRepository<Item, String> {
     List<Item> findByUserIdAndListId(String userId, String listId);
     List<Item> findByListId(String listId);
-    Optional<Item> findById(String itemId);
 
     List<Item> findByName(String name);
+
+    List<Item> findByUserId(String userId);
 
 }

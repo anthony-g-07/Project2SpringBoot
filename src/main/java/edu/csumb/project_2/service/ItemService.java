@@ -22,24 +22,43 @@ public class ItemService {
         return itemRepository.findByListId(listId);
     }
 
-    public Optional<Item> getItemById(String itemId) {
-        return itemRepository.findById(itemId);
+    public Item getItemById(String itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
     }
 
     public Item addItem(Item item) {
         return itemRepository.save(item);
     }
 
-    public boolean deleteItem(String itemNameOrId) {
-        Item item = (Item) itemRepository.findByName(itemNameOrId);
-        if (item != null) {
-            itemRepository.delete(item);
-            return true;
-        } else {
-            return false;
-        }
+    public boolean deleteItem(String itemId) {
+        // Try to find the item by ID
+        Optional<Item> itemOptional = itemRepository.findById(itemId);
 
+        if (itemOptional.isPresent()) {
+            // Delete the item if it exists
+            itemRepository.delete(itemOptional.get());
+            return true;  // Return true indicating successful deletion
+        } else {
+            // Item not found
+            return false;  // Return false indicating item was not found
+        }
     }
+
+    public Item saveItem(Item item) {
+        return itemRepository.save(item);
+    }
+
+    public List<Item> getItemsByUserId(String userId) {
+        return itemRepository.findByUserId(userId);
+    }
+
+    public Item addItemToCollection(Item item) {
+        // Save the item to the "items" collection and return the saved item
+        return itemRepository.save(item);
+    }
+
+
 
 
 }
