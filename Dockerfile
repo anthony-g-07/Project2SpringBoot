@@ -12,5 +12,11 @@ COPY build/libs/*.jar app.jar
 # Expose the application port
 EXPOSE 8080
 
+
 # Set the entry point for running the jar file
+
+
+# Run the JAR file
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
+
