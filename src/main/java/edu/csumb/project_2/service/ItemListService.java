@@ -59,6 +59,10 @@ public class ItemListService {
                 .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
     }
 
+    public List<ItemList> getRandomListsNotBelongingToUser(String userId) {
+        return itemListRepository.findRandomListsNotBelongingToUser(userId);
+    }
+
 
 
 }

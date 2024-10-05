@@ -113,6 +113,13 @@ public class ItemController {
         }
     }
 
+
+    //Gets 10 random lists that don't belong to the user
+    @GetMapping("/lists/random")
+    public List<ItemList> getRandomLists(@RequestParam String userId) {
+        return itemListService.getRandomListsNotBelongingToUser(userId);
+    }
+
     // List all items for a user (can also filter by listId)
     @GetMapping
     public ResponseEntity<List<Item>> getAllItemsForUser(
@@ -190,6 +197,8 @@ public class ItemController {
         itemService.deleteItem(itemId);
         return ResponseEntity.noContent().build();
     }
+
+
 
 
 
