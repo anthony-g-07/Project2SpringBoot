@@ -30,16 +30,9 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
-    public boolean deleteItem(String itemNameOrId) {
-        Item item = (Item) itemRepository.findByName(itemNameOrId);
-        if (item != null) {
-            itemRepository.delete(item);
-            return true;
-        } else {
-            return false;
-        }
-
-    }
+   public void deleteItem(String id) {
+    itemRepository.deleteById(id);
+}
 
 
 }

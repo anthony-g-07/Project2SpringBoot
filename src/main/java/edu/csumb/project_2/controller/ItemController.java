@@ -17,15 +17,15 @@ public class ItemController {
     @Autowired
     private ItemService itemService;
 
-    @GetMapping
-    public ResponseEntity<List<Item>> listAllItems(@RequestParam(required = false) String user,
-                                                   @RequestParam(required = false) String list) {
-        if (user == null || list == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        List<Item> items = itemService.getItemByUser(user, list);
-        return new ResponseEntity<>(items, HttpStatus.OK);
+  @GetMapping
+public ResponseEntity<List<Item>> listAllItems(@RequestParam(required = false) String user,
+                                               @RequestParam(required = false) String list) {
+    if (user == null || list == null) {
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+    List<Item> items = itemService.getItemByUser(user, list);
+    return new ResponseEntity<>(items, HttpStatus.OK);
+}
 
     @GetMapping("/list")
     public ResponseEntity<List<Item>> showSpecificList(@RequestParam String list) {
@@ -55,35 +55,20 @@ public class ItemController {
     }
 
     @PostMapping
-    public ResponseEntity<Item> addItem(
-            @RequestParam String item_name,
-            @RequestParam(required = false) String url,
-            @RequestParam(required = false) Double price,
-            @RequestParam(required = false) Integer quantity,
-            @RequestParam(required = false) String description
-    ) {
-        Item newItem = new Item();
-        newItem.setName(item_name);
-        newItem.setUrl(url);
-        newItem.setPrice(price);
-        newItem.setQuantity(quantity);
-        newItem.setDescription(description);
-
-        // Save the item
-        Item savedItem = itemService.addItem(newItem);
-
-        return new ResponseEntity<>(savedItem, HttpStatus.CREATED);
+public ResponseEntity<Item> addItem(@RequestBody Item newItem) {
+    // Save the item
+    Item savedItem = itemService.addItem(newItem);
+    return new ResponseEntity<>(savedItem, HttpStatus.CREATED);
+}
+   @DeleteMapping("/{itemId}")
+public ResponseEntity<String> deleteItem(@PathVariable String itemId) {
+    try {
+        itemService.deleteItem(itemId);
+        return new ResponseEntity<>("Item successfully deleted.", HttpStatus.OK);
+    } catch (Exception e) {
+        return new ResponseEntity<>("Item not found.", HttpStatus.NOT_FOUND);
     }
-
-    public ResponseEntity<String> deleteItem(@RequestParam String item_name) {
-        boolean isDeleted = itemService.deleteItem(item_name);
-        if (isDeleted) {
-            return new ResponseEntity<>("Item successfully deleted.", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);
-
-        }
-    }
+}
 
 
 
