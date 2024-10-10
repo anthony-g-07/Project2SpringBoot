@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -198,8 +199,36 @@ public class ItemController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/search")
+    public List<Item> listItems(@RequestParam String search) {
+        List<String> searchTerms = Arrays.asList(search.split(","));
+        return itemService.searchItems(searchTerms);
+    }
 
+    @DeleteMapping("/lists/{listId}/remove-item/{itemId}")
+    public ResponseEntity<?> removeItemFromList(
+            @PathVariable String listId,
+            @PathVariable String itemId) {
+        try {
+            // Fetch the list by listId
+            ItemList itemList = itemListService.getListById(listId);
 
+            // Find and remove the item from the list
+            List<Item> items = itemList.getItems();
+            boolean removed = items.removeIf(item -> item.getId().equals(itemId));
 
+            if (!removed) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found in the list.");
+            }
+
+            // Save the updated list
+            itemList.setItems(items);
+            itemListService.saveItemList(itemList);
+
+            return ResponseEntity.ok("Item removed from the list.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("List or Item not found.");
+        }
+    }
 
 }
