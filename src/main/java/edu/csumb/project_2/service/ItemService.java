@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
@@ -56,6 +57,15 @@ public class ItemService {
     public Item addItemToCollection(Item item) {
         // Save the item to the "items" collection and return the saved item
         return itemRepository.save(item);
+    }
+
+    public List<Item> searchItems(List<String> searchTerms) {
+        // Create a regex pattern that allows matching any of the terms
+        String regex = searchTerms.stream()
+                .map(term -> ".*" + term + ".*")  // Add '.*' to make it a contains search
+                .collect(Collectors.joining("|"));  // Join with '|' to match any term
+
+        return itemRepository.findByNameRegex(regex);
     }
 
 

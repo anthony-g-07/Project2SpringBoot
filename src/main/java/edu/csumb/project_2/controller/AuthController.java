@@ -82,10 +82,6 @@ public class AuthController {
         }
     }
 
-@GetMapping("/")
-    public String home() {
-     return "Welcome to the homepage!";
-}
 }
 
 
