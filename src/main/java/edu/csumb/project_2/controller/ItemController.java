@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,10 +67,8 @@ public class ItemController {
             @PathVariable String listId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Boolean isPublic) {
-
         // Fetch the existing list
         ItemList existingItemList = itemListService.getListById(listId);
-
         // Update only the provided fields
         if (name != null) {
             existingItemList.setName(name);
@@ -76,10 +76,8 @@ public class ItemController {
         if (isPublic != null) {
             existingItemList.setPublic(isPublic);
         }
-
         // Save the updated list
         ItemList updatedItemList = itemListService.saveItemList(existingItemList);
-
         return ResponseEntity.ok(updatedItemList);
     }
 
@@ -89,7 +87,6 @@ public class ItemController {
         itemListService.deleteList(listId);
         return ResponseEntity.noContent().build();
     }
-
     @PostMapping("/lists/{listId}/add-existing-item")
     public ResponseEntity<?> addExistingItemToList(
             @PathVariable String listId,
@@ -120,22 +117,11 @@ public class ItemController {
         return itemListService.getRandomListsNotBelongingToUser(userId);
     }
 
-    // List all items for a user (can also filter by listId)
+    // List all items
     @GetMapping
-    public ResponseEntity<List<Item>> getAllItemsForUser(
-            @RequestParam String userId,
-            @RequestParam(required = false) String listId) {
-
-        List<Item> allItems;
-
-        if (listId != null) {
-            // Fetch items by listId (if listId is provided)
-            ItemList itemList = itemListService.getListById(listId);
-            allItems = itemList.getItems();
-        } else {
-            // Fetch items directly from the Item collection by userId
-            allItems = itemService.getItemsByUserId(userId);
-        }
+    public ResponseEntity<List<Item>> getAllItems() {
+        // Fetch all items directly from the item collection
+        List<Item> allItems = itemService.getAllItems();
 
         return ResponseEntity.ok(allItems);
     }
@@ -156,21 +142,17 @@ public class ItemController {
 
 
 
-
-
-
     // Update an item by its ID
     @PatchMapping("/{itemId}")
     public ResponseEntity<Item> updateItemByParams(
             @PathVariable String itemId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String url,
+            @RequestParam(required = false) String imageUrl,
             @RequestParam(required = false) Double price,
             @RequestParam(required = false) String description) {
-
         // Fetch the existing item
         Item existingItem = itemService.getItemById(itemId);
-
         // Update only the provided fields
         if (name != null) {
             existingItem.setName(name);
@@ -184,12 +166,14 @@ public class ItemController {
         if (description != null) {
             existingItem.setDescription(description);
         }
-
+        if (imageUrl != null) {
+            existingItem.setImageURL(imageUrl);
+        }
         // Save the updated item
         Item updatedItem = itemService.saveItem(existingItem);
-
         return ResponseEntity.ok(updatedItem);
     }
+
 
     // Delete an item from a list
     @DeleteMapping("/{itemId}")
@@ -198,8 +182,38 @@ public class ItemController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/search")
+    public List<Item> listItems(@RequestParam String search) {
+        List<String> searchTerms = Arrays.asList(search.split(","));
+        return itemService.searchItems(searchTerms);
+    }
 
+    @DeleteMapping("/lists/{listId}/remove-item/{itemId}")
+    public ResponseEntity<?> removeItemFromList(
+            @PathVariable String listId,
+            @PathVariable String itemId) {
+        try {
+            // Fetch the list by listId
+            ItemList itemList = itemListService.getListById(listId);
 
+            // Find and remove the item from the list
+            List<Item> items = itemList.getItems();
+            boolean removed = items.removeIf(item -> item.getId().equals(itemId));
 
+            if (!removed) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found in the list.");
+            }
+
+            // Save the updated list
+            itemList.setItems(items);
+            itemListService.saveItemList(itemList);
+
+            return ResponseEntity.ok("Item removed from the list.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("List or Item not found.");
+        }
+    }
 
 }
+
+
