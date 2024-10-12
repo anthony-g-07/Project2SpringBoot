@@ -10,22 +10,22 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Item {
     @Id
     private String id;
-
-    private String userId;
     private String name;
     private String description;
+    private String imageURL;
     private String url;
     private Double price;
 
-    private String listId;
 
-    public String getListId() {
-        return listId;
+    public String getImageURL() {
+        return imageURL;
     }
 
-    public void setListId(String listId) {
-        this.listId = listId;
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
+
+
 
     public String getUrl() {
         return url;
@@ -67,11 +67,5 @@ public class Item {
         this.description = description;
     }
 
-    public String getUserId() {
-        return userId;
-    }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
 }

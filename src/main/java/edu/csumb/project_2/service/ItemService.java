@@ -15,13 +15,11 @@ public class ItemService {
     @Autowired
     private ItemRepository itemRepository;
 
-    public List<Item> getItemByUser(String userId, String listId) {
-        return itemRepository.findByUserIdAndListId(userId, listId);
+    public List<Item> getAllItems() {
+        return itemRepository.findAll();
     }
 
-    public List<Item> getItemsByListId(String listId) {
-        return itemRepository.findByListId(listId);
-    }
+
 
     public Item getItemById(String itemId) {
         return itemRepository.findById(itemId)
@@ -50,9 +48,7 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
-    public List<Item> getItemsByUserId(String userId) {
-        return itemRepository.findByUserId(userId);
-    }
+
 
     public Item addItemToCollection(Item item) {
         // Save the item to the "items" collection and return the saved item
