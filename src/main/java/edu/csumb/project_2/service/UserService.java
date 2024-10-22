@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -58,6 +59,24 @@ public class UserService {
             return userRepository.save(user);
         }
         return null;
+    }
+
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public boolean deleteUser(String username) {
+        // Find the user by username
+        Optional<User> userOptional = userRepository.findOptionalByUsername(username);
+
+        // If the user is found, delete and return true
+        if (userOptional.isPresent()) {
+            userRepository.delete(userOptional.get());
+            return true;
+        }
+
+        // If not found, return false
+        return false;
     }
 }
 
