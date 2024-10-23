@@ -15,6 +15,14 @@ public class ItemService {
     @Autowired
     private ItemRepository itemRepository;
 
+
+public List<Item> getItemsByCategory(String category) {
+    return itemRepository.findByCategory(category);
+}
+
+
+
+
     public List<Item> getAllItems() {
         return itemRepository.findAll();
     }

@@ -36,6 +36,7 @@ public class ItemController {
         return ResponseEntity.ok(itemLists);
     }
 
+
     // Get a specific list by ID
     @GetMapping("/lists/{listId}")
     public ResponseEntity<ItemList> getListById(@PathVariable String listId) {
@@ -133,6 +134,10 @@ public class ItemController {
         return ResponseEntity.ok(item);
     }
 
+
+
+
+
     // Add a new item to the "items" collection
     @PostMapping
     public ResponseEntity<Item> addItemToCollection(@RequestBody Item item) {
@@ -142,37 +147,34 @@ public class ItemController {
 
 
 
-    // Update an item by its ID
-    @PatchMapping("/{itemId}")
-    public ResponseEntity<Item> updateItemByParams(
-            @PathVariable String itemId,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String url,
-            @RequestParam(required = false) String imageUrl,
-            @RequestParam(required = false) Double price,
-            @RequestParam(required = false) String description) {
-        // Fetch the existing item
-        Item existingItem = itemService.getItemById(itemId);
-        // Update only the provided fields
-        if (name != null) {
-            existingItem.setName(name);
-        }
-        if (url != null) {
-            existingItem.setUrl(url);
-        }
-        if (price != null) {
-            existingItem.setPrice(price);
-        }
-        if (description != null) {
-            existingItem.setDescription(description);
-        }
-        if (imageUrl != null) {
-            existingItem.setImageURL(imageUrl);
-        }
-        // Save the updated item
-        Item updatedItem = itemService.saveItem(existingItem);
-        return ResponseEntity.ok(updatedItem);
+
+@PatchMapping("/{itemId}")
+public ResponseEntity<Item> updateItemByParams(
+    @PathVariable String itemId,
+    @RequestBody Item updatedItem) {  // Ensure it's receiving the correct payload
+    Item existingItem = itemService.getItemById(itemId);
+
+    // Update fields if provided
+    if (updatedItem.getName() != null) {
+        existingItem.setName(updatedItem.getName());
     }
+    if (updatedItem.getDescription() != null) {
+        existingItem.setDescription(updatedItem.getDescription());
+    }
+    if (updatedItem.getPrice() != null) {
+        existingItem.setPrice(updatedItem.getPrice());
+    }
+    if (updatedItem.getUrl() != null) {
+        existingItem.setUrl(updatedItem.getUrl());
+    }
+    if (updatedItem.getImageURL() != null) {
+        existingItem.setImageURL(updatedItem.getImageURL());
+    }
+
+    // Save updated item
+    Item updated = itemService.saveItem(existingItem);
+    return ResponseEntity.ok(updated);
+}
 
 
     // Delete an item from a list
@@ -213,6 +215,24 @@ public class ItemController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("List or Item not found.");
         }
     }
+
+
+
+
+@GetMapping("/books")
+public ResponseEntity<List<Item>> getBooks() {
+    List<Item> books = itemService.getItemsByCategory("Books");
+    return ResponseEntity.ok(books);
+}
+
+
+@PostMapping("/books")
+public ResponseEntity<Item> addBook(@RequestBody Item item) {
+    item.setCategory("Books");  // Ensure the category is set to "Books"
+    Item savedItem = itemService.addItemToCollection(item);
+    return ResponseEntity.ok(savedItem);
+}
+
 
 
 }
