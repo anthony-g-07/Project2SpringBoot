@@ -17,6 +17,16 @@ public class User {
 
     private String password;
 
+    private Boolean isAdmin;
+
+    public Boolean getAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        isAdmin = admin;
+    }
+
     // Getters and Setters
 
     public String getId() {

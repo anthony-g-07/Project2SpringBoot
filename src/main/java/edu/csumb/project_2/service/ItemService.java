@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
@@ -14,25 +15,39 @@ public class ItemService {
     @Autowired
     private ItemRepository itemRepository;
 
-    public List<Item> getItemByUser(String userId, String listId) {
-        return itemRepository.findByUserIdAndListId(userId, listId);
+
+public List<Item> getItemsByCategory(String category) {
+    return itemRepository.findByCategory(category);
+}
+
+
+
+
+    public List<Item> getAllItems() {
+        return itemRepository.findAll();
     }
 
-    public List<Item> getItemsByListId(String listId) {
-        return itemRepository.findByListId(listId);
-    }
 
-    public Optional<Item> getItemById(String itemId) {
-        return itemRepository.findById(itemId);
+
+    public Item getItemById(String itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
     }
 
     public Item addItem(Item item) {
         return itemRepository.save(item);
     }
 
-   public void deleteItem(String id) {
-    itemRepository.deleteById(id);
-}
+    public boolean deleteItem(String itemNameOrId) {
+        Item item = (Item) itemRepository.findByName(itemNameOrId);
+        if (item != null) {
+            itemRepository.delete(item);
+            return true;
+        } else {
+            return false;
+        }
+
+    }
 
 
 }
