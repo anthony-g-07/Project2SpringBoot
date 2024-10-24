@@ -8,70 +8,56 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 @Service
 public class ItemService {
 
+    private final ItemRepository itemRepository;
+
     @Autowired
-    private ItemRepository itemRepository;
-
-
-public List<Item> getItemsByCategory(String category) {
-    return itemRepository.findByCategory(category);
-}
-
-
-
-
-    public List<Item> getAllItems() {
-        return itemRepository.findAll();
+    public ItemService(ItemRepository itemRepository) {
+        this.itemRepository = itemRepository;
     }
 
-
-
-    public Item getItemById(String itemId) {
-        return itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
-    }
-
+    // Add a new item
     public Item addItem(Item item) {
         return itemRepository.save(item);
     }
 
-    public boolean deleteItem(String itemId) {
-        // Try to find the item by ID
-        Optional<Item> itemOptional = itemRepository.findById(itemId);
+    // Add item to a collection (if needed)
+   public Item addItemToCollection(Item item) {
+    // Ensure the category is properly set and only added to the intended collection
+    return itemRepository.save(item);
+}
 
-        if (itemOptional.isPresent()) {
-            // Delete the item if it exists
-            itemRepository.delete(itemOptional.get());
-            return true;  // Return true indicating successful deletion
-        } else {
-            // Item not found
-            return false;  // Return false indicating item was not found
-        }
-    }
-
+    // Save (update) an existing item
     public Item saveItem(Item item) {
         return itemRepository.save(item);
     }
 
-
-
-    public Item addItemToCollection(Item item) {
-        // Save the item to the "items" collection and return the saved item
-        return itemRepository.save(item);
-    }
-
+    // Search items by name or description
     public List<Item> searchItems(List<String> searchTerms) {
-        // Create a regex pattern that allows matching any of the terms
-        String regex = searchTerms.stream()
-                .map(term -> ".*" + term + ".*")  // Add '.*' to make it a contains search
-                .collect(Collectors.joining("|"));  // Join with '|' to match any term
-
-        return itemRepository.findByNameRegex(regex);
+        return itemRepository.findByNameInOrDescriptionIn(searchTerms, searchTerms);
     }
 
+    // Fetch all items
+    public List<Item> getAllItems() {
+        return itemRepository.findAll();
+    }
+
+    // Fetch item by ID
+    public Item getItemById(String itemId) {
+        return itemRepository.findById(itemId).orElse(null);
+    }
+
+    // Delete an item by ID
+    public void deleteItem(String itemId) {
+        itemRepository.deleteById(itemId);
+    }
+
+    // Fetch items by category
+    public List<Item> getItemsByCategory(String category) {
+        return itemRepository.findByCategory(category);
+    }
 
 
 

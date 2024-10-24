@@ -5,23 +5,19 @@ import edu.csumb.project_2.model.ItemList;
 import edu.csumb.project_2.service.ItemListService;
 import edu.csumb.project_2.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/items")
 public class ItemController {
 
-    private ItemService itemService;
-    private ItemListService itemListService;
+    private final ItemService itemService;
+    private final ItemListService itemListService;
 
     @Autowired
     public ItemController(ItemService itemService, ItemListService itemListService) {
@@ -36,7 +32,6 @@ public class ItemController {
         return ResponseEntity.ok(itemLists);
     }
 
-
     // Get a specific list by ID
     @GetMapping("/lists/{listId}")
     public ResponseEntity<ItemList> getListById(@PathVariable String listId) {
@@ -50,34 +45,29 @@ public class ItemController {
             @RequestParam String userId,
             @RequestParam String name,
             @RequestParam boolean isPublic) {
-        // Create the ItemList object from the request parameters
         ItemList itemList = new ItemList();
         itemList.setUserId(userId);
         itemList.setName(name);
         itemList.setPublic(isPublic);
 
-        // Save the list using the service
         ItemList savedList = itemListService.saveItemList(itemList);
-
         return ResponseEntity.ok(savedList);
     }
-
 
     @PatchMapping("/lists/{listId}")
     public ResponseEntity<ItemList> updateListByParams(
             @PathVariable String listId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Boolean isPublic) {
-        // Fetch the existing list
         ItemList existingItemList = itemListService.getListById(listId);
-        // Update only the provided fields
+
         if (name != null) {
             existingItemList.setName(name);
         }
         if (isPublic != null) {
             existingItemList.setPublic(isPublic);
         }
-        // Save the updated list
+
         ItemList updatedItemList = itemListService.saveItemList(existingItemList);
         return ResponseEntity.ok(updatedItemList);
     }
@@ -88,31 +78,25 @@ public class ItemController {
         itemListService.deleteList(listId);
         return ResponseEntity.noContent().build();
     }
+
+    // Add an existing item to a list
     @PostMapping("/lists/{listId}/add-existing-item")
     public ResponseEntity<?> addExistingItemToList(
             @PathVariable String listId,
             @RequestParam String itemId) {
         try {
-            // Fetch the existing list
             ItemList itemList = itemListService.getListById(listId);
-
-            // Fetch the existing item by itemId
             Item item = itemService.getItemById(itemId);
-
-            // Add the item to the list
             itemList.getItems().add(item);
 
-            // Save the updated list
             ItemList updatedItemList = itemListService.saveItemList(itemList);
-
             return ResponseEntity.ok(updatedItemList);
-        } catch (RuntimeException  e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("List or Item not found.");
         }
     }
 
-
-    //Gets 10 random lists that don't belong to the user
+    // Get 10 random lists that don't belong to the user
     @GetMapping("/lists/random")
     public List<ItemList> getRandomLists(@RequestParam String userId) {
         return itemListService.getRandomListsNotBelongingToUser(userId);
@@ -121,9 +105,7 @@ public class ItemController {
     // List all items
     @GetMapping
     public ResponseEntity<List<Item>> getAllItems() {
-        // Fetch all items directly from the item collection
         List<Item> allItems = itemService.getAllItems();
-
         return ResponseEntity.ok(allItems);
     }
 
@@ -134,71 +116,110 @@ public class ItemController {
         return ResponseEntity.ok(item);
     }
 
-
-
-
-
-    // Add a new item to the "items" collection
+    // Add a new item to the collection
     @PostMapping
-    public ResponseEntity<Item> addItemToCollection(@RequestBody Item item) {
+    public ResponseEntity<Item> addItem(@RequestBody Item newItem) {
+        Item savedItem = itemService.addItem(newItem);
+        return new ResponseEntity<>(savedItem, HttpStatus.CREATED);
+    }
+
+    // Add a new item specifically to the "Books" category
+    @PostMapping("/books")
+    public ResponseEntity<Item> addBook(@RequestBody Item item) {
+        item.setCategory("Books");  // Ensure the category is set to "Books"
         Item savedItem = itemService.addItemToCollection(item);
         return ResponseEntity.ok(savedItem);
     }
 
-
-
-
-@PatchMapping("/{itemId}")
-public ResponseEntity<Item> updateItemByParams(
-    @PathVariable String itemId,
-    @RequestBody Item updatedItem) {  // Ensure it's receiving the correct payload
-    Item existingItem = itemService.getItemById(itemId);
-
-    // Update fields if provided
-    if (updatedItem.getName() != null) {
-        existingItem.setName(updatedItem.getName());
-    }
-    if (updatedItem.getDescription() != null) {
-        existingItem.setDescription(updatedItem.getDescription());
-    }
-    if (updatedItem.getPrice() != null) {
-        existingItem.setPrice(updatedItem.getPrice());
-    }
-    if (updatedItem.getUrl() != null) {
-        existingItem.setUrl(updatedItem.getUrl());
-    }
-    if (updatedItem.getImageURL() != null) {
-        existingItem.setImageURL(updatedItem.getImageURL());
+    // Get books from the "Books" category
+    @GetMapping("/books")
+    public ResponseEntity<List<Item>> getBooks() {
+        List<Item> books = itemService.getItemsByCategory("Books");
+        return ResponseEntity.ok(books);
     }
 
-    // Save updated item
-    Item updated = itemService.saveItem(existingItem);
-    return ResponseEntity.ok(updated);
+   @PostMapping("/clothing")
+public ResponseEntity<Item> addCloth(@RequestBody Item item) {
+    // Set the category to Clothing
+    item.setCategory("Clothing");
+    // Save the item only to the Clothing collection
+    Item savedItem = itemService.addItemToCollection(item);
+    return ResponseEntity.ok(savedItem);
+}
+
+@GetMapping("/clothing")
+public ResponseEntity<List<Item>> getCloth() {
+    // Fetch items from the Clothing category only
+    List<Item> clothing = itemService.getItemsByCategory("Clothing");
+    return ResponseEntity.ok(clothing);
 }
 
 
-    // Delete an item from a list
+
+    @PostMapping("/games")
+    public ResponseEntity<Item> addGame(@RequestBody Item item) {
+    item.setCategory("Games");  // Ensure the category is set to "Games"
+    Item savedItem = itemService.addItemToCollection(item);
+    return ResponseEntity.ok(savedItem);
+    }
+
+// Get items from the "Games" category
+    @GetMapping("/games")
+    public ResponseEntity<List<Item>> getGames() {
+    List<Item> games = itemService.getItemsByCategory("Games");  // Use "Games" as the category filter
+    return ResponseEntity.ok(games);
+    }
+
+
+
+
+    // Delete an item by ID
     @DeleteMapping("/{itemId}")
-    public ResponseEntity<Void> deleteItem(@PathVariable String itemId) {
-        itemService.deleteItem(itemId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteItem(@PathVariable String itemId) {
+        try {
+            itemService.deleteItem(itemId);
+            return new ResponseEntity<>("Item successfully deleted.", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Item not found.", HttpStatus.NOT_FOUND);
+        }
     }
 
-    @GetMapping("/search")
-    public List<Item> listItems(@RequestParam String search) {
-        List<String> searchTerms = Arrays.asList(search.split(","));
-        return itemService.searchItems(searchTerms);
+
+    
+    // Update an item by its ID
+    @PatchMapping("/{itemId}")
+    public ResponseEntity<Item> updateItemByParams(
+            @PathVariable String itemId,
+            @RequestBody Item updatedItem) {
+        Item existingItem = itemService.getItemById(itemId);
+
+        if (updatedItem.getName() != null) {
+            existingItem.setName(updatedItem.getName());
+        }
+        if (updatedItem.getDescription() != null) {
+            existingItem.setDescription(updatedItem.getDescription());
+        }
+        if (updatedItem.getPrice() != null) {
+            existingItem.setPrice(updatedItem.getPrice());
+        }
+        if (updatedItem.getUrl() != null) {
+            existingItem.setUrl(updatedItem.getUrl());
+        }
+        if (updatedItem.getImageURL() != null) {
+            existingItem.setImageURL(updatedItem.getImageURL());
+        }
+
+        Item updated = itemService.saveItem(existingItem);
+        return ResponseEntity.ok(updated);
     }
 
+    // Remove an item from a list
     @DeleteMapping("/lists/{listId}/remove-item/{itemId}")
     public ResponseEntity<?> removeItemFromList(
             @PathVariable String listId,
             @PathVariable String itemId) {
         try {
-            // Fetch the list by listId
             ItemList itemList = itemListService.getListById(listId);
-
-            // Find and remove the item from the list
             List<Item> items = itemList.getItems();
             boolean removed = items.removeIf(item -> item.getId().equals(itemId));
 
@@ -206,35 +227,20 @@ public ResponseEntity<Item> updateItemByParams(
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found in the list.");
             }
 
-            // Save the updated list
             itemList.setItems(items);
             itemListService.saveItemList(itemList);
-
             return ResponseEntity.ok("Item removed from the list.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("List or Item not found.");
         }
     }
 
-
-
-
-@GetMapping("/books")
-public ResponseEntity<List<Item>> getBooks() {
-    List<Item> books = itemService.getItemsByCategory("Books");
-    return ResponseEntity.ok(books);
-}
-
-
-@PostMapping("/books")
-public ResponseEntity<Item> addBook(@RequestBody Item item) {
-    item.setCategory("Books");  // Ensure the category is set to "Books"
-    Item savedItem = itemService.addItemToCollection(item);
-    return ResponseEntity.ok(savedItem);
-}
-
-
-
+    // Search items based on search terms
+    @GetMapping("/search")
+    public List<Item> listItems(@RequestParam String search) {
+        List<String> searchTerms = Arrays.asList(search.split(","));
+        return itemService.searchItems(searchTerms);
+    }
 }
 
 
