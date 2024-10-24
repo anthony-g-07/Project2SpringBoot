@@ -42,10 +42,10 @@ public class UserController {
     }
 
     // Update a user
-//    @PatchMapping
-//    public ResponseEntity<User> updateUser(@RequestParam String username, @RequestBody User userDetails) {
-//        User updatedUser = userService.updateUser(username, userDetails);
-//        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-//    }
+    @PatchMapping
+    public ResponseEntity<User> updateUser(@RequestParam String username, @RequestBody User userDetails) {
+        User updatedUser = userService.updateUser(username, userDetails);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
 
 }
