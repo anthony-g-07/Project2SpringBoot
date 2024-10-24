@@ -97,8 +97,8 @@ public class UserService {
                 String encodedPassword = passwordEncoder.encode(userDetails.getPassword());
                 existingUser.setPassword(encodedPassword);
             }
-            if (userDetails.getAdmin() != null) {
-                existingUser.setAdmin(userDetails.getAdmin());
+            if (userDetails.getIsAdmin() != null) {
+                existingUser.setIsAdmin(userDetails.getIsAdmin());
             }
 
             // Save the updated user back to the repository
