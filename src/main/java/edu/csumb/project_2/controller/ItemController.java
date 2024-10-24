@@ -154,21 +154,76 @@ public ResponseEntity<List<Item>> getCloth() {
     return ResponseEntity.ok(clothing);
 }
 
-
-
-    @PostMapping("/games")
-    public ResponseEntity<Item> addGame(@RequestBody Item item) {
-    item.setCategory("Games");  // Ensure the category is set to "Games"
+@PostMapping("/gadget")
+public ResponseEntity<Item> addGadget(@RequestBody Item item) {
+    // Set the category to Gadget
+    item.setCategory("Gadget");
+    // Save the item only to the Gadget collection
     Item savedItem = itemService.addItemToCollection(item);
     return ResponseEntity.ok(savedItem);
-    }
+}
 
-// Get items from the "Games" category
-    @GetMapping("/games")
-    public ResponseEntity<List<Item>> getGames() {
-    List<Item> games = itemService.getItemsByCategory("Games");  // Use "Games" as the category filter
+@GetMapping("/gadget")
+public ResponseEntity<List<Item>> getGadget() {
+    // Fetch items from the Gadget category only
+    List<Item> gadgets = itemService.getItemsByCategory("Gadget");
+    return ResponseEntity.ok(gadgets);
+}
+
+
+@PostMapping("/handcraft")
+public ResponseEntity<Item> addHandCraft(@RequestBody Item item) {
+    // Set the category to HandCraft
+    item.setCategory("HandCraft");
+    // Save the item only to the HandCraft collection
+    Item savedItem = itemService.addItemToCollection(item);
+    return ResponseEntity.ok(savedItem);
+}
+
+@GetMapping("/handcraft")
+public ResponseEntity<List<Item>> getHandCraft() {
+    // Fetch items from the HandCraft category only
+    List<Item> handcrafts = itemService.getItemsByCategory("HandCraft");
+    return ResponseEntity.ok(handcrafts);
+}
+
+
+@PostMapping("/giftcard")
+public ResponseEntity<Item> addGiftCard(@RequestBody Item item) {
+    // Set the category to GiftCard
+    item.setCategory("GiftCard");
+    // Save the item only to the GiftCard collection
+    Item savedItem = itemService.addItemToCollection(item);
+    return ResponseEntity.ok(savedItem);
+}
+
+@GetMapping("/giftcard")
+public ResponseEntity<List<Item>> getGiftCard() {
+    // Fetch items from the GiftCard category only
+    List<Item> giftCards = itemService.getItemsByCategory("GiftCard");
+    return ResponseEntity.ok(giftCards);
+}
+
+
+
+
+
+
+  @PostMapping("/games")
+public ResponseEntity<Item> addGame(@RequestBody Item item) {
+    // Set the category to Games
+    item.setCategory("Games");
+    // Save the item only to the Games collection
+    Item savedItem = itemService.addItemToCollection(item);
+    return ResponseEntity.ok(savedItem);
+}
+
+@GetMapping("/games")
+public ResponseEntity<List<Item>> getGames() {
+    // Fetch items from the Games category only
+    List<Item> games = itemService.getItemsByCategory("Games");
     return ResponseEntity.ok(games);
-    }
+}
 
 
 
