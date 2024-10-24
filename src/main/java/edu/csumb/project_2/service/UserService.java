@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -58,6 +59,54 @@ public class UserService {
             return userRepository.save(user);
         }
         return null;
+    }
+
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public boolean deleteUser(String username) {
+        // Find the user by username
+        Optional<User> userOptional = userRepository.findOptionalByUsername(username);
+
+        // If the user is found, delete and return true
+        if (userOptional.isPresent()) {
+            userRepository.delete(userOptional.get());
+            return true;
+        }
+
+        // If not found, return false
+        return false;
+    }
+
+    public User updateUser(String username, User userDetails) {
+        // Find the existing user by username
+        User existingUser = userRepository.findByUsername(username);
+
+        // Check if the user exists
+        if (existingUser != null) {
+            // Update user fields with the new details, as appropriate
+            if (userDetails.getName() != null) {
+                existingUser.setName(userDetails.getName());
+            }
+            if (userDetails.getUsername() != null) {
+                existingUser.setUsername(userDetails.getUsername());
+            }
+            if (userDetails.getPassword() != null) {
+                // Encode the new password before saving it
+                String encodedPassword = passwordEncoder.encode(userDetails.getPassword());
+                existingUser.setPassword(encodedPassword);
+            }
+            if (userDetails.getAdmin() != null) {
+                existingUser.setAdmin(userDetails.getAdmin());
+            }
+
+            // Save the updated user back to the repository
+            return userRepository.save(existingUser);
+        }
+
+        // Return null or throw an exception if the user is not found
+        throw new RuntimeException("User not found");
     }
 }
 
