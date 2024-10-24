@@ -10,6 +10,9 @@ public interface ItemRepository extends MongoRepository<Item, String> {
 
     // Find items by name
     List<Item> findByName(String name);
+    
+    List<Item> findByNameInOrDescriptionIn(List<String> names, List<String> descriptions);
+
 
     // Find items using a regular expression
     @Query("{ 'name': { $regex: ?0, $options: 'i' } }")

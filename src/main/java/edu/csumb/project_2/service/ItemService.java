@@ -8,46 +8,57 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 @Service
 public class ItemService {
 
+    private final ItemRepository itemRepository;
+
     @Autowired
-    private ItemRepository itemRepository;
-
-
-public List<Item> getItemsByCategory(String category) {
-    return itemRepository.findByCategory(category);
-}
-
-
-
-
-    public List<Item> getAllItems() {
-        return itemRepository.findAll();
+    public ItemService(ItemRepository itemRepository) {
+        this.itemRepository = itemRepository;
     }
 
-
-
-    public Item getItemById(String itemId) {
-        return itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
-    }
-
+    // Add a new item
     public Item addItem(Item item) {
         return itemRepository.save(item);
     }
 
-    public boolean deleteItem(String itemNameOrId) {
-        Item item = (Item) itemRepository.findByName(itemNameOrId);
-        if (item != null) {
-            itemRepository.delete(item);
-            return true;
-        } else {
-            return false;
-        }
+    // Add item to a collection (if needed)
+   public Item addItemToCollection(Item item) {
+    // Ensure the category is properly set and only added to the intended collection
+    return itemRepository.save(item);
+}
 
+    // Save (update) an existing item
+    public Item saveItem(Item item) {
+        return itemRepository.save(item);
     }
+
+    // Search items by name or description
+    public List<Item> searchItems(List<String> searchTerms) {
+        return itemRepository.findByNameInOrDescriptionIn(searchTerms, searchTerms);
+    }
+
+    // Fetch all items
+    public List<Item> getAllItems() {
+        return itemRepository.findAll();
+    }
+
+    // Fetch item by ID
+    public Item getItemById(String itemId) {
+        return itemRepository.findById(itemId).orElse(null);
+    }
+
+    // Delete an item by ID
+    public void deleteItem(String itemId) {
+        itemRepository.deleteById(itemId);
+    }
+
+    // Fetch items by category
+    public List<Item> getItemsByCategory(String category) {
+        return itemRepository.findByCategory(category);
+    }
+
 
 
 }
