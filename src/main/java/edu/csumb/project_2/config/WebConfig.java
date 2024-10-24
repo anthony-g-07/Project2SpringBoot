@@ -11,9 +11,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")  // React frontend origin
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-                .allowedHeaders("*")
-                .allowCredentials(true);
+            .allowedOrigins("http://localhost:3000", "https://wishlistapi-b5777d959cf8.herokuapp.com")  // Allow local dev and production
+            .allowedMethods("GET", "POST", "PATCH", "DELETE", "PUT")
+            .allowedHeaders("*")
+            .allowCredentials(true);
     }
 }
