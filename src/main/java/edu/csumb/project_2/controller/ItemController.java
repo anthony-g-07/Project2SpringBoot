@@ -292,9 +292,8 @@ public ResponseEntity<List<Item>> getGames() {
 
     // Search items based on search terms
     @GetMapping("/search")
-    public List<Item> listItems(@RequestParam String search) {
-        List<String> searchTerms = Arrays.asList(search.split(","));
-        return itemService.searchItems(searchTerms);
+    public List<Item> searchItems(@RequestParam String search) {
+        return itemService.searchItems(search);
     }
 }
 
