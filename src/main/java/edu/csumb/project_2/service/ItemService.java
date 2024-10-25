@@ -34,10 +34,11 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
-    // Search items by name or description
-    public List<Item> searchItems(List<String> searchTerms) {
-        return itemRepository.findByNameInOrDescriptionIn(searchTerms, searchTerms);
+     // Search items by name or description using regex
+    public List<Item> searchItems(String searchTerm) {
+        return itemRepository.findByNameOrDescriptionRegex(searchTerm);
     }
+
 
     // Fetch all items
     public List<Item> getAllItems() {

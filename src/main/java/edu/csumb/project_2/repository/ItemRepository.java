@@ -15,8 +15,9 @@ public interface ItemRepository extends MongoRepository<Item, String> {
 
 
     // Find items using a regular expression
-    @Query("{ 'name': { $regex: ?0, $options: 'i' } }")
-    List<Item> findByNameRegex(String regex);
+ @Query("{ $or: [ { 'name': { $regex: ?0, $options: 'i' } }, { 'description': { $regex: ?0, $options: 'i' } } ] }")
+    List<Item> findByNameOrDescriptionRegex(String regex);
+
 
     // Find items by category
     List<Item> findByCategory(String category);
