@@ -108,5 +108,15 @@ public class UserService {
         // Return null or throw an exception if the user is not found
         throw new RuntimeException("User not found");
     }
+
+    public boolean verifyPassword(String username, String password) {
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            // Use password encoder to match the incoming password with the stored hashed password
+            return passwordEncoder.matches(password, user.getPassword());
+        }
+        return false;
+    }
+
 }
 

@@ -48,4 +48,21 @@ public class UserController {
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
+    // New delete function with password verification
+    @DeleteMapping("/secure-delete")
+    public ResponseEntity<String> deleteUserWithPassword(@RequestParam String username, @RequestParam String password) {
+        boolean isVerified = userService.verifyPassword(username, password);
+        if (isVerified) {
+            boolean isDeleted = userService.deleteUser(username);
+            if (isDeleted) {
+                return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<>("Invalid password", HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+
 }
